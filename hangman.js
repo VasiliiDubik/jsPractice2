@@ -108,8 +108,6 @@ const hangmanParts = [
   document.getElementById("human-leg_right"),
 ];
 
-// hangmanParts.forEach((part) => (part.style.display = "none"));
-
 // Функция показа частей тела
 function showHangmanPart(wrongGuesses) {
   if (wrongGuesses >= 1 && wrongGuesses <= 6) {
@@ -160,6 +158,24 @@ document.querySelectorAll(".letter-button").forEach((button) => {
     }
   });
 });
+
+function handleKeyPress(event) {
+  const pressedKey = event.key.toUpperCase();
+  if (letters.includes(pressedKey)) {
+    const button = Array.from(document.querySelectorAll(".letter-button")).find(
+      (btn) => btn.textContent === pressedKey
+    );
+
+    if (button && !button.disabled) {
+      button.click();
+    }
+  }
+}
+
+document.addEventListener("keydown", handleKeyPress);
+
+const aaa = document.querySelectorAll(".letter-button");
+console.log(aaa);
 
 // Функция перезапуска игры
 function restartGame() {
