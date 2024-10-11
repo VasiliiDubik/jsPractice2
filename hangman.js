@@ -12,18 +12,29 @@ const hangman = document.createElement("div");
 hangman.id = "hangman";
 container.appendChild(hangman);
 
-hangman.innerHTML = `
-        <div id="lower-support"></div>
-        <div id="vertical-beam"></div>
-        <div id="uper-support"></div>
-        <div id="rope"></div>
-        <div id="human-head" class="human__part "></div>
-        <div id="human-body" class="human__part"></div>
-        <div id="human-hund_left" class="human__part"></div>
-        <div id="human-hund_right" class="human__part"></div>
-        <div id="human-leg_left" class="human__part"></div>
-        <div id="human-leg_right" class="human__part"></div>
-  `;
+const hangmanPartsData = [
+  { id: "lower-support", className: "" },
+  { id: "vertical-beam", className: "" },
+  { id: "uper-support", className: "" },
+  { id: "rope", className: "" },
+  { id: "human-head", className: "human__part" },
+  { id: "human-body", className: "human__part" },
+  { id: "human-hund_left", className: "human__part" },
+  { id: "human-hund_right", className: "human__part" },
+  { id: "human-leg_left", className: "human__part" },
+  { id: "human-leg_right", className: "human__part" },
+];
+
+function renderHangmanElements() {
+  hangmanPartsData.forEach((part) => {
+    const div = document.createElement("div");
+    div.id = part.id;
+    div.className = part.className;
+    hangman.appendChild(div);
+  });
+}
+
+renderHangmanElements();
 
 // Контейнер для слова и подсказок
 const wordContainer = document.createElement("div");
