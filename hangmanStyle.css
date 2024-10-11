@@ -1,0 +1,206 @@
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f5f5ff;
+}
+
+#container {
+  border: 3px solid #4a4a4a;
+  border-radius: 10px;
+  padding: 30px;
+  width: 800px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#title-text {
+  font-size: 36px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#hangman {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+  border: none;
+}
+
+#lower-support,
+#vertical-beam,
+#uper-support,
+#rope {
+  background-color: black;
+}
+
+#lower-support {
+  width: 50%;
+  height: 10px;
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+}
+
+#vertical-beam {
+  width: 10px;
+  height: 90%;
+  position: absolute;
+  bottom: 10px;
+  left: 120px;
+}
+
+#uper-support {
+  width: 60%;
+  height: 10px;
+  position: absolute;
+  top: 5%;
+  left: 120px;
+}
+
+#rope {
+  width: 2px;
+  height: 15%;
+  position: absolute;
+  top: 5%;
+  left: 290px;
+}
+
+#human-head {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid black;
+  position: absolute;
+  left: 265px;
+  top: 50px;
+}
+
+#human-body {
+  width: 6px;
+  height: 80px;
+  background-color: black;
+  position: absolute;
+  left: 290px;
+  top: 100px;
+}
+
+#human-hund_left,
+#human-hund_right {
+  width: 4px;
+  height: 50px;
+  background-color: black;
+  position: absolute;
+}
+
+#human-hund_left {
+  left: 273px;
+  top: 120px;
+  transform: rotate(45deg);
+}
+
+#human-hund_right {
+  left: 310px;
+  top: 120px;
+  transform: rotate(-45deg);
+}
+
+#human-leg_left,
+#human-leg_right {
+  width: 4px;
+  height: 60px;
+  background-color: black;
+  position: absolute;
+}
+
+#human-leg_left {
+  left: 270px;
+  top: 170px;
+  transform: rotate(45deg);
+}
+
+#human-leg_right {
+  left: 313px;
+  top: 170px;
+  transform: rotate(-45deg);
+}
+
+#word-display {
+  font-size: 32px;
+  letter-spacing: 15px;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+#hint-display {
+  font-size: 18px;
+  text-align: center;
+  color: #3e51b5;
+  margin-bottom: 15px;
+}
+
+#mistakes-display {
+  font-size: 18px;
+  text-align: center;
+  color: red;
+  margin-bottom: 30px;
+}
+
+#button-container {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr); /* кнопки выровнены в три строки */
+  gap: 10px;
+  justify-items: center;
+  margin: 0 auto;
+  width: 70%;
+}
+
+.letter-button {
+  width: 50px;
+  height: 50px;
+  background-color: #4a4a9d;
+  border: none;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.letter-button:disabled {
+  background-color: #c2c2c2; /* серый цвет для заблокированных кнопок */
+}
+
+.letter-button:hover:not(:disabled) {
+  background-color: #6e6ea5;
+}
+
+#word-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+#hint-text {
+  display: flex;
+  justify-content: center;
+}
+
+#incorrect-guesses {
+  display: flex;
+  justify-content: center;
+}
+
+.human__part {
+  display: none;
+}
+
+.human__part_visible {
+  display: block;
+}
