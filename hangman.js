@@ -25,12 +25,18 @@ const hangmanPartsData = [
   { id: "human-leg_right", className: "human__part" },
 ];
 
+const hangmanParts = [];
+
 function renderHangmanElements() {
   hangmanPartsData.forEach((part) => {
     const div = document.createElement("div");
     div.id = part.id;
     div.className = part.className;
     hangman.appendChild(div);
+
+    if (part.id.includes("human")) {
+      hangmanParts.push(div);
+    }
   });
 }
 
@@ -55,70 +61,14 @@ const buttonContainer = document.createElement("div");
 buttonContainer.id = "button-container";
 container.appendChild(buttonContainer);
 
+const elementBtnsDict = {};
+
 const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 letters.split("").forEach((letter) => {
   const button = document.createElement("button");
   button.classList.add("letter-button");
   button.textContent = letter;
   buttonContainer.appendChild(button);
-});
-
-// Список загаданных слов и подсказок
-const wordsWithHints = [
-  {
-    word: "COMPUTER",
-    hint: "An electronic device for storing and processing data.",
-  },
-  {
-    word: "TELEPHONE",
-    hint: "A device used to transmit sound over long distances.",
-  },
-  {
-    word: "INTERNET",
-    hint: "A global network providing a variety of information.",
-  },
-  {
-    word: "PROGRAM",
-    hint: "A sequence of instructions that a computer can execute.",
-  },
-];
-
-let currentWordObject =
-  wordsWithHints[Math.floor(Math.random() * wordsWithHints.length)];
-let currentWord = currentWordObject.word;
-hintText.textContent = `Hint: ${currentWordObject.hint}`;
-
-let wordState = "_".repeat(currentWord.length).split(""); // Состояние слова
-let wrongGuesses = 0;
-
-// Отображение текущего состояния слова
-function displayWord() {
-  wordContainer.textContent = wordState.join(" ");
-}
-
-displayWord();
-
-// Скрытие всех частей тела при загрузке
-const hangmanParts = [
-  document.getElementById("human-head"),
-  document.getElementById("human-body"),
-  document.getElementById("human-hund_left"),
-  document.getElementById("human-hund_right"),
-  document.getElementById("human-leg_left"),
-  document.getElementById("human-leg_right"),
-];
-
-// Функция показа частей тела
-function showHangmanPart(wrongGuesses) {
-  if (wrongGuesses >= 1 && wrongGuesses <= 6) {
-    // hangmanParts[wrongGuesses - 1].style.display = "block";
-    const hangmanPartToDisplay = hangmanParts[wrongGuesses - 1];
-    hangmanPartToDisplay.classList.add("human__part_visible");
-  }
-}
-
-// Обработка кликов по буквам
-document.querySelectorAll(".letter-button").forEach((button) => {
   button.addEventListener("click", () => {
     const letter = button.textContent;
     if (currentWord.includes(letter)) {
@@ -157,25 +107,57 @@ document.querySelectorAll(".letter-button").forEach((button) => {
       setTimeout(() => restartGame(), 200);
     }
   });
+
+  elementBtnsDict[letter] = button;
+  document.addEventListener("keydown", (event) => {
+    const pressedKey = event.key.toUpperCase();
+    if (letters.includes(pressedKey)) {
+      const button = elementBtnsDict[pressedKey];
+      button?.click();
+    }
+  });
 });
 
-function handleKeyPress(event) {
-  const pressedKey = event.key.toUpperCase();
-  if (letters.includes(pressedKey)) {
-    const button = Array.from(document.querySelectorAll(".letter-button")).find(
-      (btn) => btn.textContent === pressedKey
-    );
+const wordsWithHints = [
+  {
+    word: "COMPUTER",
+    hint: "An electronic device for storing and processing data.",
+  },
+  {
+    word: "TELEPHONE",
+    hint: "A device used to transmit sound over long distances.",
+  },
+  {
+    word: "INTERNET",
+    hint: "A global network providing a variety of information.",
+  },
+  {
+    word: "PROGRAM",
+    hint: "A sequence of instructions that a computer can execute.",
+  },
+];
 
-    if (button && !button.disabled) {
-      button.click();
-    }
-  }
+let currentWordObject =
+  wordsWithHints[Math.floor(Math.random() * wordsWithHints.length)];
+let currentWord = currentWordObject.word;
+hintText.textContent = `Hint: ${currentWordObject.hint}`;
+
+let wordState = "_".repeat(currentWord.length).split(""); // Состояние слова
+let wrongGuesses = 0;
+
+// Отображение текущего состояния слова
+function displayWord() {
+  wordContainer.textContent = wordState.join(" ");
 }
 
-document.addEventListener("keydown", handleKeyPress);
+displayWord();
 
-const aaa = document.querySelectorAll(".letter-button");
-console.log(aaa);
+function showHangmanPart(wrongGuesses) {
+  if (wrongGuesses >= 1 && wrongGuesses <= 6) {
+    const hangmanPartToDisplay = hangmanParts[wrongGuesses - 1];
+    hangmanPartToDisplay.classList.add("human__part_visible");
+  }
+}
 
 // Функция перезапуска игры
 function restartGame() {
@@ -186,9 +168,6 @@ function restartGame() {
   hintText.textContent = `Hint: ${currentWordObject.hint}`;
   wordState = "_".repeat(currentWord.length).split("");
   wrongGuesses = 0;
-
-  // Скрытие частей тела
-  // hangmanParts.forEach((part) => (part.style.display = "none"));
 
   // Обновление отображения
   displayWord();
