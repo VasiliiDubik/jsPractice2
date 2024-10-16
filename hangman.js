@@ -113,7 +113,11 @@ letters.split("").forEach((letter) => {
     const pressedKey = event.key.toUpperCase();
     if (letters.includes(pressedKey)) {
       const button = elementBtnsDict[pressedKey];
-      button?.click();
+
+      if (button && !button.disabled) {
+        button.click();
+        button.classList.add("pressed");
+      }
     }
   });
 });

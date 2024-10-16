@@ -171,14 +171,20 @@ body {
   font-weight: bold;
   border-radius: 5px;
   cursor: pointer;
+  transition: transform 0.1s ease;
 }
 
 .letter-button:disabled {
-  background-color: #c2c2c2; /* серый цвет для заблокированных кнопок */
+  background-color: #c2c2c2;
 }
 
 .letter-button:hover:not(:disabled) {
   background-color: #6e6ea5;
+}
+
+.letter-button:active,
+.letter-button.pressed {
+  transform: scale(0.95);
 }
 
 #word-container {
