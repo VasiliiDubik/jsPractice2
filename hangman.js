@@ -116,7 +116,7 @@ letters.split("").forEach((letter) => {
 
       if (button && !button.disabled) {
         button.click();
-        button.classList.add("pressed");
+        button.classList.add("letter_button__pressed");
       }
     }
   });

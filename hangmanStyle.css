@@ -183,7 +183,7 @@ body {
 }
 
 .letter-button:active,
-.letter-button.pressed {
+.letter_button__pressed {
   transform: scale(0.95);
 }
 
