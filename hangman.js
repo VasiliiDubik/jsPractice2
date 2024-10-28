@@ -1,102 +1,147 @@
-// Инициализация игрового интерфейса
-const container = document.createElement("div");
-container.id = "container";
-document.body.appendChild(container);
+class HangmanGame {
+  constructor() {
+    this.container = document.createElement("div");
+    this.container.id = "container";
+    document.body.appendChild(this.container);
 
-const title = document.createElement("h1");
-title.id = "title-text";
-title.textContent = "HANGMAN GAME";
-container.appendChild(title);
+    this.title = document.createElement("h1");
+    this.title.id = "title-text";
+    this.title.textContent = "HANGMAN GAME";
+    this.container.appendChild(this.title);
 
-const hangman = document.createElement("div");
-hangman.id = "hangman";
-container.appendChild(hangman);
+    this.hangman = document.createElement("div");
+    this.hangman.id = "hangman";
+    this.container.appendChild(this.hangman);
 
-const hangmanPartsData = [
-  { id: "lower-support", className: "" },
-  { id: "vertical-beam", className: "" },
-  { id: "uper-support", className: "" },
-  { id: "rope", className: "" },
-  { id: "human-head", className: "human__part" },
-  { id: "human-body", className: "human__part" },
-  { id: "human-hund_left", className: "human__part" },
-  { id: "human-hund_right", className: "human__part" },
-  { id: "human-leg_left", className: "human__part" },
-  { id: "human-leg_right", className: "human__part" },
-];
+    this.hangmanPartsData = [
+      { id: "lower-support", className: "" },
+      { id: "vertical-beam", className: "" },
+      { id: "uper-support", className: "" },
+      { id: "rope", className: "" },
+      { id: "human-head", className: "human__part" },
+      { id: "human-body", className: "human__part" },
+      { id: "human-hund_left", className: "human__part" },
+      { id: "human-hund_right", className: "human__part" },
+      { id: "human-leg_left", className: "human__part" },
+      { id: "human-leg_right", className: "human__part" },
+    ];
 
-const hangmanParts = [];
+    this.hangmanParts = [];
 
-function renderHangmanElements() {
-  hangmanPartsData.forEach((part) => {
-    const div = document.createElement("div");
-    div.id = part.id;
-    div.className = part.className;
-    hangman.appendChild(div);
+    this.renderHangmanElements();
 
-    if (part.id.includes("human")) {
-      hangmanParts.push(div);
-    }
-  });
-}
+    this.wordContainer = document.createElement("div");
+    this.wordContainer.id = "word-container";
+    this.container.appendChild(this.wordContainer);
 
-renderHangmanElements();
+    this.hintText = document.createElement("p");
+    this.hintText.id = "hint-text";
+    this.container.appendChild(this.hintText);
 
-// Контейнер для слова и подсказок
-const wordContainer = document.createElement("div");
-wordContainer.id = "word-container";
-container.appendChild(wordContainer);
+    this.incorrectGuesses = document.createElement("p");
+    this.incorrectGuesses.id = "incorrect-guesses";
+    this.incorrectGuesses.textContent = "Incorrect guesses: 0 / 6";
+    this.container.appendChild(this.incorrectGuesses);
 
-const hintText = document.createElement("p");
-hintText.id = "hint-text";
-container.appendChild(hintText);
+    this.buttonContainer = document.createElement("div");
+    this.buttonContainer.id = "button-container";
+    this.container.appendChild(this.buttonContainer);
 
-const incorrectGuesses = document.createElement("p");
-incorrectGuesses.id = "incorrect-guesses";
-incorrectGuesses.textContent = "Incorrect guesses: 0 / 6";
-container.appendChild(incorrectGuesses);
+    this.elementBtnsDict = {};
 
-// Контейнер для кнопок с буквами
-const buttonContainer = document.createElement("div");
-buttonContainer.id = "button-container";
-container.appendChild(buttonContainer);
+    this.letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    this.letters.split("").forEach((letter) => {
+      const button = document.createElement("button");
+      button.classList.add("letter-button");
+      button.textContent = letter;
+      this.buttonContainer.appendChild(button);
+      button.addEventListener("click", () => {
+        this.processLetterClick(button.textContent);
+      });
 
-const elementBtnsDict = {};
+      this.elementBtnsDict[letter] = button;
+      document.addEventListener("keydown", (event) => {
+        const pressedKey = event.key.toUpperCase();
+        if (this.letters.includes(pressedKey)) {
+          const button = this.elementBtnsDict[pressedKey];
 
-const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-letters.split("").forEach((letter) => {
-  const button = document.createElement("button");
-  button.classList.add("letter-button");
-  button.textContent = letter;
-  buttonContainer.appendChild(button);
-  button.addEventListener("click", () => {
-    const letter = button.textContent;
-    if (currentWord.includes(letter)) {
-      // Если буква правильная, обновляем состояние слова
-      currentWord.split("").forEach((char, index) => {
-        if (char === letter) {
-          wordState[index] = letter;
+          if (button && !button.disabled) {
+            button.click();
+            button.classList.add("letter_button__pressed");
+          }
         }
       });
-      displayWord();
+    });
+
+    this.wordsWithHints = [
+      {
+        word: "COMPUTER",
+        hint: "An electronic device for storing and processing data.",
+      },
+      {
+        word: "TELEPHONE",
+        hint: "A device used to transmit sound over long distances.",
+      },
+      {
+        word: "INTERNET",
+        hint: "A global network providing a variety of information.",
+      },
+      {
+        word: "PROGRAM",
+        hint: "A sequence of instructions that a computer can execute.",
+      },
+    ];
+
+    this.currentWordObject =
+      this.wordsWithHints[
+        Math.floor(Math.random() * this.wordsWithHints.length)
+      ];
+    this.currentWord = this.currentWordObject.word;
+    this.hintText.textContent = `Hint: ${this.currentWordObject.hint}`;
+
+    this.wordState = "_".repeat(this.currentWord.length).split("");
+    this.wrongGuesses = 0;
+
+    this.displayWord();
+
+    this.restartGame();
+  }
+
+  renderHangmanElements() {
+    this.hangmanPartsData.forEach((part) => {
+      const div = document.createElement("div");
+      div.id = part.id;
+      div.className = part.className;
+      this.hangman.appendChild(div);
+
+      if (part.id.includes("human")) {
+        this.hangmanParts.push(div);
+      }
+    });
+  }
+
+  processLetterClick(letter) {
+    if (this.currentWord.includes(letter)) {
+      this.currentWord.split("").forEach((char, index) => {
+        if (char === letter) {
+          this.wordState[index] = letter;
+        }
+      });
+      this.displayWord();
     } else {
-      // Если буква неверная, увеличиваем счетчик ошибок и показываем часть тела
-      wrongGuesses++;
-      incorrectGuesses.textContent = `Incorrect guesses: ${wrongGuesses} / 6`;
-      showHangmanPart(wrongGuesses);
+      this.wrongGuesses++;
+      this.incorrectGuesses.textContent = `Incorrect guesses: ${this.wrongGuesses} / 6`;
+      this.showHangmanPart(this.wrongGuesses);
     }
 
-    // Блокировка нажатой кнопки
-    button.disabled = true;
+    this.elementBtnsDict[letter].disabled = true;
 
-    // Проверка на выигрыш
-    if (wordState.join("") === currentWord) {
+    if (this.wordState.join("") === this.currentWord) {
       setTimeout(() => alert("Congratulations! You guessed the word!"), 100);
-      setTimeout(() => restartGame(), 200);
+      setTimeout(() => this.restartGame(), 200);
     }
 
-    // Проверка на проигрыш
-    if (wrongGuesses >= 6) {
+    if (this.wrongGuesses >= 6) {
       setTimeout(
         () =>
           alert(
@@ -104,81 +149,38 @@ letters.split("").forEach((letter) => {
           ),
         100
       );
-      setTimeout(() => restartGame(), 200);
+      setTimeout(() => this.restartGame(), 200);
     }
-  });
+  }
 
-  elementBtnsDict[letter] = button;
-  document.addEventListener("keydown", (event) => {
-    const pressedKey = event.key.toUpperCase();
-    if (letters.includes(pressedKey)) {
-      const button = elementBtnsDict[pressedKey];
+  displayWord() {
+    this.wordContainer.textContent = this.wordState.join(" ");
+  }
 
-      if (button && !button.disabled) {
-        button.click();
-        button.classList.add("letter_button__pressed");
-      }
+  showHangmanPart(wrongGuesses) {
+    if (wrongGuesses >= 1 && wrongGuesses <= 6) {
+      const hangmanPartToDisplay = this.hangmanParts[wrongGuesses - 1];
+      hangmanPartToDisplay.classList.add("human__part_visible");
     }
-  });
-});
+  }
 
-const wordsWithHints = [
-  {
-    word: "COMPUTER",
-    hint: "An electronic device for storing and processing data.",
-  },
-  {
-    word: "TELEPHONE",
-    hint: "A device used to transmit sound over long distances.",
-  },
-  {
-    word: "INTERNET",
-    hint: "A global network providing a variety of information.",
-  },
-  {
-    word: "PROGRAM",
-    hint: "A sequence of instructions that a computer can execute.",
-  },
-];
+  restartGame() {
+    this.currentWordObject =
+      this.wordsWithHints[
+        Math.floor(Math.random() * this.wordsWithHints.length)
+      ];
+    this.currentWord = this.currentWordObject.word;
+    this.hintText.textContent = `Hint: ${this.currentWordObject.hint}`;
+    this.wordState = "_".repeat(this.currentWord.length).split("");
+    this.wrongGuesses = 0;
 
-let currentWordObject =
-  wordsWithHints[Math.floor(Math.random() * wordsWithHints.length)];
-let currentWord = currentWordObject.word;
-hintText.textContent = `Hint: ${currentWordObject.hint}`;
+    this.displayWord();
+    this.incorrectGuesses.textContent = `Incorrect guesses: ${this.wrongGuesses} / 6`;
 
-let wordState = "_".repeat(currentWord.length).split(""); // Состояние слова
-let wrongGuesses = 0;
-
-// Отображение текущего состояния слова
-function displayWord() {
-  wordContainer.textContent = wordState.join(" ");
-}
-
-displayWord();
-
-function showHangmanPart(wrongGuesses) {
-  if (wrongGuesses >= 1 && wrongGuesses <= 6) {
-    const hangmanPartToDisplay = hangmanParts[wrongGuesses - 1];
-    hangmanPartToDisplay.classList.add("human__part_visible");
+    document.querySelectorAll(".letter-button").forEach((button) => {
+      button.disabled = false;
+    });
   }
 }
 
-// Функция перезапуска игры
-function restartGame() {
-  // Сброс состояния игры
-  currentWordObject =
-    wordsWithHints[Math.floor(Math.random() * wordsWithHints.length)];
-  currentWord = currentWordObject.word;
-  hintText.textContent = `Hint: ${currentWordObject.hint}`;
-  wordState = "_".repeat(currentWord.length).split("");
-  wrongGuesses = 0;
-
-  // Обновление отображения
-  displayWord();
-  incorrectGuesses.textContent = `Incorrect guesses: ${wrongGuesses} / 6`;
-
-  // Сброс кнопок
-  document.querySelectorAll(".letter-button").forEach((button) => {
-    button.disabled = false;
-  });
-}
+const game = new HangmanGame();
